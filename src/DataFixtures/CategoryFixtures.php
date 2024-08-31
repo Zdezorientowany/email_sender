@@ -19,7 +19,7 @@ class CategoryFixtures extends Fixture
         $manager->persist($category2);
 
         $category3 = new Category();
-        $category3->setName('Empolyees');
+        $category3->setName('Employees');
         $manager->persist($category3);
 
         $manager->flush();
