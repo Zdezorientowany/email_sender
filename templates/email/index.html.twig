@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Email Sender{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header text-white">
+            <h1>Send an Email</h1>
+        </div>
+        <div class="card-body">
+            <form action="{{ path('send_email') }}" method="post" data-turbo="false">
+                <div class="form-group mt-2">
+                    <label for="categories" class="fw-bold">Category:</label>
+                    <select name="categories[]" id="categories" class="form-control {% if errors.categories is defined %}is-invalid{% endif %}">
+                        <option value="" disabled selected>Select a category</option>
+                        {% for category in categories %}
+                            <option value="{{ category.name }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if errors.categories is defined %}
+                        <div class="invalid-feedback">
+                            {{ errors.categories }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mt-2">
+                    <label for="subject" class="fw-bold">Subject:</label>
+                    <input 
+                        name="subject" 
+                        id="subject" 
+                        class="form-control {% if errors.subject is defined %}is-invalid{% endif %}" 
+                        placeholder="Enter the email subject"
+                        maxlength="100" 
+                    ></input>
+                    {% if errors.subject is defined %}
+                        <div class="invalid-feedback">
+                            {{ errors.subject }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mt-2">
+                    <label for="message" class="fw-bold">Message:</label>
+                    <textarea 
+                        name="message" 
+                        id="message" 
+                        class="form-control {% if errors.message is defined %}is-invalid{% endif %}" 
+                        placeholder="Enter your message"
+                        maxlength="255" 
+                        rows="3" 
+                        cols="50"
+                    ></textarea>
+                    {% if errors.message is defined %}
+                        <div class="invalid-feedback">
+                            {{ errors.message }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-success mt-4">Send Emails</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -76,6 +76,11 @@ class User
         return $this;
     }
 
+    public function getFullName(): string
+    {
+        return $this->firstName . ' ' . $this->lastName;
+    }
+
     /**
      * @return Collection<int, Category>
      */
