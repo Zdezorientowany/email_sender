@@ -8,13 +8,11 @@ use Symfony\Component\Mime\Email;
 
 class EmailService
 {
-    private UserRepository $userRepository;
-    private MailerInterface $mailer;
-
-    public function __construct(UserRepository $userRepository, MailerInterface $mailer)
-    {
-        $this->userRepository = $userRepository;
-        $this->mailer = $mailer;
+    public function __construct(
+        private UserRepository $userRepository, 
+        private MailerInterface $mailer
+    ){
+        //
     }
 
     public function sendEmails(string $subject, string $message, array $categories): void

@@ -60,18 +60,28 @@ Load the data fixtures to populate the database with test data:
 docker-compose exec php bin/console doctrine:fixtures:load
 ```
 
-### 7. Start the application
+### 7. Running Messenger Workers
+
+To process email sending and other queued tasks, you need to run the Messenger workers. You can start the workers with the following command:
+
+```bash
+docker-compose exec php bin/console messenger:consume async
+```
+
+### 8. Start the application
 
 The application is served by Nginx and will automatically start when you bring up the Docker containers.
 The application should now be accessible at http://localhost:8000.
 
-### 8. Stopping the application
+### 9. Stopping the application
 
 To stop the Docker containers, use:
 
 ```bash
 docker-compose down
 ```
+
+After completing the steps above, your application should be fully set up and ready to use.
 
 ## Development
 
@@ -98,6 +108,8 @@ phpMyAdmin is available for database management at:
 http://localhost:8080
 ```
 
+Login and Password are 'root'
+
 ### Access Mailpit
 
 Mailpit is available for viewing and managing emails sent during development at:
@@ -107,11 +119,3 @@ http://localhost:8025
 ```
 
 All outgoing emails during development are captured by Mailpit, allowing you to inspect them without actually sending emails to real addresses.
-
-### Running Messenger Workers
-
-To process email sending and other queued tasks, you need to run the Messenger workers. You can start the workers with the following command:
-
-```bash
-docker-compose exec php bin/console messenger:consume async
-```

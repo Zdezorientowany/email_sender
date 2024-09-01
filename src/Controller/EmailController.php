@@ -9,14 +9,25 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Repository\CategoryRepository;
 
 class EmailController extends AbstractController
 {
-    private EmailService $emailService;
+    public function __construct(
+        private EmailService $emailService, 
+        private CategoryRepository $categoryRepository
+    ){
+        //
+    }
 
-    public function __construct(EmailService $emailService)
+    #[Route('/', name: 'index', methods: ['GET'])]
+    public function index(): Response
     {
-        $this->emailService = $emailService;
+        $categories = $this->categoryRepository->findAll();
+
+        return $this->render('email/index.html.twig', [
+            'categories' => $categories,
+        ]);
     }
 
     #[Route('/send-email', name: 'send_email', methods: ['POST'])]
@@ -27,24 +38,31 @@ class EmailController extends AbstractController
         $emailRequest->setMessage($request->request->get('message'));
         $emailRequest->setCategories($request->request->all('categories'));
 
-        // Walidacja danych
         $errors = $validator->validate($emailRequest);
 
         if (count($errors) > 0) {
             $errorMessages = [];
             foreach ($errors as $error) {
-                $errorMessages[] = $error->getMessage();
+                $errorMessages[$error->getPropertyPath()] = $error->getMessage();
             }
-            return new Response(implode("\n", $errorMessages), Response::HTTP_BAD_REQUEST);
+
+            $categories = $this->categoryRepository->findAll();
+
+            return $this->render('email/index.html.twig', [
+                'categories' => $categories,
+                'errors' => $errorMessages,
+            ]);
         }
 
-        // Wysłanie e-maili
         $this->emailService->sendEmails(
             $emailRequest->getSubject(),
             $emailRequest->getMessage(),
             $emailRequest->getCategories()
         );
 
-        return new Response('Emails sent successfully!');
+        $this->addFlash('success', 'Emails sent successfully!');
+        
+        return $this->redirectToRoute('index');
     }
+
 }
