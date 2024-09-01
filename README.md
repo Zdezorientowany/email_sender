@@ -119,3 +119,52 @@ http://localhost:8025
 ```
 
 All outgoing emails during development are captured by Mailpit, allowing you to inspect them without actually sending emails to real addresses.
+
+## Test Environment Setup
+
+### 1. Create the Test Database
+
+First, create the test database:
+
+```bash
+docker-compose exec php bin/console doctrine:database:create --env=test
+```
+
+### 2. Run Database Migrations
+
+Apply the database migrations for the test environment:
+
+```bash
+docker-compose exec php bin/console doctrine:migrations:migrate --env=test
+```
+
+### 3. Load Data Fixtures
+
+If you need to seed the test database with data, load the fixtures:
+
+```bash
+docker-compose exec php bin/console doctrine:fixtures:load --env=test
+```
+
+### 4. Update the .env.test File
+
+Ensure your .env.test file is correctly configured. Here is an example:
+
+```bash
+# .env.test
+APP_ENV=test
+APP_SECRET=your_secret_key
+DATABASE_URL=mysql://root:root@mysql:3306/symfony
+MAILER_DSN=smtp://mailpit:1025
+MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0
+```
+
+### 5. Running Tests
+
+To run the tests, use the following command:
+
+```bash
+docker-compose exec php ./vendor/bin/phpunit
+```
+
+This will execute the test suite in the context of Docker.
