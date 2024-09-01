@@ -49,7 +49,8 @@ docker-compose exec php composer install
 Generate and apply the database migrations to set up the database schema:
 
 ```bash
-docker-compose exec php bin/console doctrine:migrations:generate
+docker-compose exec php bin/console doctrine:database:create
+docker-compose exec php bin/console doctrine:migrations:diff
 docker-compose exec php bin/console doctrine:migrations:migrate
 ```
 
