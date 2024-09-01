@@ -4,27 +4,35 @@ namespace App\Service;
 
 use App\Repository\UserRepository;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+
 
 class EmailService
 {
     public function __construct(
         private UserRepository $userRepository, 
-        private MailerInterface $mailer
+        private MailerInterface $mailer,
     ){
         //
     }
 
-    public function sendEmails(string $subject, string $message, array $categories): void
+ public function sendEmails(string $subject, string $message, array $categories): void
     {
         $users = $this->userRepository->findByCategories($categories);
 
         foreach ($users as $user) {
-            $email = (new Email())
+            $fullName = $user->getFullName();
+            
+            $email = (new TemplatedEmail())
                 ->from('no-reply@test.com')
                 ->to($user->getEmail())
                 ->subject($subject)
-                ->text($message);
+                ->htmlTemplate('email/email_template.html.twig')
+                ->context([
+                    'subject' => $subject,
+                    'message' => $message,
+                    'fullName' => $fullName,
+                ]);
 
             $this->mailer->send($email);
         }
